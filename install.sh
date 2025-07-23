@@ -75,9 +75,9 @@ if [ ! -d "$DOTFILES_DIR" ]; then
     git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
 else
     echo "Dotfiles repository already exists at $DOTFILES_DIR. Pulling latest changes..."
-    cd "$DOTFILES_DIR"
+    cd "$DOTFILES_DIR" || exit
     git pull origin main # Or 'master'
-    cd "$HOME" # Change back to home
+    cd "$HOME" || exit # Change back to home
 fi
 
 # 3. Ensure Homebrew is installed (macOS specific)
@@ -109,4 +109,39 @@ install_oh_my_zsh_if_needed
 # 7. Install Starship (if not present)
 install_starship_if_needed
 
-echo "Dotfiles setup complete! Please restart your terminal or run 'source ~/.zshrc' for changes to take effect."
+echo ""
+echo "========================================================="
+echo "Dotfiles setup complete! Your terminal prompt might not"
+echo "look right yet if you don't have a Nerd Font installed."
+echo "========================================================="
+echo ""
+echo "--- IMPORTANT: Nerd Font Installation ---"
+echo "Starship requires a Nerd Font for its special symbols (like Git branch icons)."
+echo "Without it, you'll see broken characters or question marks."
+echo ""
+echo "Recommended Nerd Fonts: MesloLGS NF, FiraCode Nerd Font, Hack Nerd Font."
+echo ""
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    echo "On macOS:"
+    echo "1. Visit https://www.nerdfonts.com/font-downloads"
+    echo "2. Download your preferred font (e.g., MesloLGS NF)."
+    echo "3. Open the downloaded font file(s) and use Font Book to install them."
+    echo "   (Alternatively, for Homebrew users: brew tap homebrew/cask-fonts && brew install --cask font-meslo-lg-nerd-font)"
+    echo "4. Open your Terminal.app or iTerm2 preferences (Cmd + ,)."
+    echo "5. Go to Profiles -> Text -> Font and select your newly installed Nerd Font."
+elif [[ "$(uname -s)" == "Linux" ]]; then
+    echo "On Linux (including WSL):"
+    echo "1. Visit https://www.nerdfonts.com/font-downloads"
+    echo "2. Download your preferred font (e.g., MesloLGS NF)."
+    echo "3. Create a fonts directory: mkdir -p ~/.local/share/fonts"
+    echo "4. Move the downloaded .ttf or .otf font files into ~/.local/share/fonts/"
+    echo "5. Refresh font cache: fc-cache -fv"
+    echo "6. Open your terminal emulator (e.g., Windows Terminal for WSL, Gnome Terminal, Konsole, Alacritty) preferences."
+    echo "7. Go to Profile Settings -> Appearance -> Font and select your newly installed Nerd Font."
+fi
+
+echo ""
+echo "After installing and setting the font, please restart your terminal or run 'source ~/.zshrc'."
+echo "Enjoy your supercharged terminal!"
+echo "========================================================="
