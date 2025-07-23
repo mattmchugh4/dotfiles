@@ -1,29 +1,94 @@
 #!/bin/bash
 
+set -e # Exit immediately if a command exits with a non-zero status.
+
 # --- Configuration ---
 DOTFILES_REPO="git@github.com:mattmchugh4/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
 BREW_INSTALL_URL="/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
 OMZ_INSTALL_URL="sh -c \"$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\""
-STARSHIP_INSTALL_URL="curl -sS https://starship.rs/install.sh | sh"
+STARSHIP_INSTALL_URL="curl -sS https://starship.rs/install.sh | sh -- --yes" # Add --yes to auto-confirm
 
 # --- Helper Functions ---
+
+# Installs Homebrew on macOS if not found
 install_brew_if_needed() {
     if ! command -v brew &> /dev/null; then
         echo "Homebrew not found. Installing Homebrew..."
         eval "$BREW_INSTALL_URL"
-        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile # Add brew to PATH for M1 Macs
-        eval "$(/opt/homebrew/bin/brew shellenv)" # Source immediately
+        # Add brew to PATH for Apple Silicon Macs
+        if [ -f "/opt/homebrew/bin/brew" ]; then
+            echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        fi
     else
         echo "Homebrew already installed."
     fi
 }
 
+# Installs packages using Homebrew on macOS
+install_brew_packages() {
+    local packages=(
+        stow
+        bat
+        coreutils # GNU core utilities
+        fzf
+        grep      # GNU grep
+        htop
+        rename
+        thefuck
+        tree
+    )
+
+    echo "macOS detected. Installing packages with Homebrew..."
+    brew install "${packages[@]}"
+
+    # Install fzf key bindings and fuzzy completion
+    echo "Configuring fzf for macOS..."
+    "$(brew --prefix)/opt/fzf/install" --all
+}
+
+# Installs packages using APT on Linux/WSL
+install_apt_packages() {
+    local packages=(
+        stow
+        bat       # On Debian/Ubuntu, this is often the 'batcat' binary
+        fzf
+        htop
+        rename
+        thefuck
+        tree
+    )
+
+    echo "Linux/WSL detected. Installing packages with APT..."
+    sudo apt update
+    sudo apt install -y "${packages[@]}"
+
+    # Handle bat vs batcat naming convention on Debian/Ubuntu
+    if command -v batcat &> /dev/null && ! command -v bat &> /dev/null; then
+        echo "Creating 'bat' symlink for 'batcat'..."
+        mkdir -p "$HOME/.local/bin"
+        ln -sf "$(command -v batcat)" "$HOME/.local/bin/bat"
+        echo "✅ Symlink created. Ensure '$HOME/.local/bin' is in your PATH."
+    fi
+}
+
+# Router function to call the correct package installer
+install_packages() {
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        install_brew_if_needed
+        install_brew_packages
+    elif [[ "$(uname -s)" == "Linux" ]]; then
+        install_apt_packages
+    else
+        echo "Unsupported OS: $(uname -s). Please install packages manually."
+        exit 1
+    fi
+}
+
 install_oh_my_zsh_if_needed() {
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
-        echo "Oh My Zsh not found. Installing Oh My Zsh..."
-        # --unattended: Install without user interaction.
-        # --keep-zshrc: Keep your existing .zshrc (important for Starship config).
+        echo "Installing Oh My Zsh..."
         eval "$OMZ_INSTALL_URL" "" --unattended --keep-zshrc
     else
         echo "Oh My Zsh already installed."
@@ -32,7 +97,7 @@ install_oh_my_zsh_if_needed() {
 
 install_starship_if_needed() {
     if ! command -v starship &> /dev/null; then
-        echo "Starship not found. Installing Starship..."
+        echo "Installing Starship..."
         eval "$STARSHIP_INSTALL_URL"
     else
         echo "Starship already installed."
@@ -42,106 +107,72 @@ install_starship_if_needed() {
 stow_dotfiles() {
     echo "Changing to dotfiles directory: $DOTFILES_DIR"
     if [ ! -d "$DOTFILES_DIR" ]; then
-        echo "Error: Dotfiles directory not found at $DOTFILES_DIR"
+        echo "Error: Dotfiles directory not found at $DOTFILES_DIR" >&2
         exit 1
     fi
-    cd "$DOTFILES_DIR" || { echo "Failed to change directory."; exit 1; }
-
-    echo "Stowing dotfiles packages..."
-    # Stow each package. Add/remove as per your setup.
-    stow zsh
-    stow starship
-    stow git
-    stow vim # if you have a vim package
-    stow tmux # if you have a tmux package
-    # ... add other packages here ...
-
-    echo "Dotfiles packages stowed."
+    # Use a subshell to avoid needing to cd back
+    (
+        cd "$DOTFILES_DIR" || exit
+        echo "Stowing dotfiles packages..."
+        # Stow each package. Add/remove as per your setup.
+        stow zsh
+        stow starship
+        stow git
+        # ... add other packages here ...
+        echo "Dotfiles stowed successfully."
+    )
 }
 
 # --- Main Script Execution ---
 
 echo "Starting dotfiles setup..."
 
-# 1. Install Git if not present (macOS usually prompts, but good to check)
+# 1. Check for Git
 if ! command -v git &> /dev/null; then
-    echo "Git not found. Please install Git (e.g., via Xcode Command Line Tools or Homebrew) and re-run."
+    echo "Error: Git is not installed. Please install it manually and re-run this script." >&2
     exit 1
 fi
 
 # 2. Clone the dotfiles repository
 if [ ! -d "$DOTFILES_DIR" ]; then
-    echo "Cloning dotfiles repository from $DOTFILES_REPO to $DOTFILES_DIR..."
+    echo "Cloning dotfiles repository..."
     git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
 else
-    echo "Dotfiles repository already exists at $DOTFILES_DIR. Pulling latest changes..."
-    cd "$DOTFILES_DIR" || exit
-    git pull origin main # Or 'master'
-    cd "$HOME" || exit # Change back to home
+    echo "Dotfiles repository already exists. Pulling latest changes..."
+    (cd "$DOTFILES_DIR" && git pull origin main)
 fi
 
-# 3. Ensure Homebrew is installed (macOS specific)
-if [[ "$(uname -s)" == "Darwin" ]]; then
-    install_brew_if_needed
-fi
+# 3. Install packages based on OS
+install_packages
 
-# 4. Install Stow
-if ! command -v stow &> /dev/null; then
-    echo "Stow not found. Installing Stow..."
-    if [[ "$(uname -s)" == "Darwin" ]]; then
-        brew install stow
-    elif [[ "$(uname -s)" == "Linux" ]]; then
-        sudo apt update && sudo apt install -y stow # Example for Debian/Ubuntu
-    else
-        echo "Cannot install Stow automatically on this OS. Please install it manually."
-        exit 1
-    fi
-else
-    echo "Stow already installed."
-fi
-
-# 5. Stow your dotfiles (which includes your .zshrc and starship.toml)
+# 4. Stow your dotfiles (run this after installing stow)
 stow_dotfiles
 
-# 6. Install Oh My Zsh (if not present)
+# 5. Install Oh My Zsh (run after stowing .zshrc)
 install_oh_my_zsh_if_needed
 
-# 7. Install Starship (if not present)
+# 6. Install Starship
 install_starship_if_needed
 
+# --- Final Instructions ---
 echo ""
 echo "========================================================="
-echo "Dotfiles setup complete! Your terminal prompt might not"
-echo "look right yet if you don't have a Nerd Font installed."
+echo "✅ Dotfiles setup complete!"
 echo "========================================================="
 echo ""
-echo "--- IMPORTANT: Nerd Font Installation ---"
-echo "Starship requires a Nerd Font for its special symbols (like Git branch icons)."
-echo "Without it, you'll see broken characters or question marks."
-echo ""
-echo "Recommended Nerd Fonts: MesloLGS NF, FiraCode Nerd Font, Hack Nerd Font."
-echo ""
+echo "--- ⚠️ IMPORTANT: Final Steps ---"
+echo "1. Install a Nerd Font (e.g., MesloLGS NF, FiraCode Nerd Font)."
+echo "   - On macOS: brew install --cask font-meslo-lg-nerd-font"
+echo "   - On Linux: See https://www.nerdfonts.com/font-downloads for instructions."
+echo "2. Set the Nerd Font in your terminal's preferences."
+echo "3. Restart your terminal or run 'source ~/.zshrc' to apply all changes."
 
-if [[ "$(uname -s)" == "Darwin" ]]; then
-    echo "On macOS:"
-    echo "1. Visit https://www.nerdfonts.com/font-downloads"
-    echo "2. Download your preferred font (e.g., MesloLGS NF)."
-    echo "3. Open the downloaded font file(s) and use Font Book to install them."
-    echo "   (Alternatively, for Homebrew users: brew tap homebrew/cask-fonts && brew install --cask font-meslo-lg-nerd-font)"
-    echo "4. Open your Terminal.app or iTerm2 preferences (Cmd + ,)."
-    echo "5. Go to Profiles -> Text -> Font and select your newly installed Nerd Font."
-elif [[ "$(uname -s)" == "Linux" ]]; then
-    echo "On Linux (including WSL):"
-    echo "1. Visit https://www.nerdfonts.com/font-downloads"
-    echo "2. Download your preferred font (e.g., MesloLGS NF)."
-    echo "3. Create a fonts directory: mkdir -p ~/.local/share/fonts"
-    echo "4. Move the downloaded .ttf or .otf font files into ~/.local/share/fonts/"
-    echo "5. Refresh font cache: fc-cache -fv"
-    echo "6. Open your terminal emulator (e.g., Windows Terminal for WSL, Gnome Terminal, Konsole, Alacritty) preferences."
-    echo "7. Go to Profile Settings -> Appearance -> Font and select your newly installed Nerd Font."
+if [[ "$(uname -s)" == "Linux" ]]; then
+    echo ""
+    echo "--- Linux Specific Notes ---"
+    echo "- For fzf keybindings (Ctrl+R, etc.), add this to your .zshrc:"
+    echo "  [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh"
+    echo "- Ensure '$HOME/.local/bin' is in your PATH for the 'bat' command to work."
 fi
 
-echo ""
-echo "After installing and setting the font, please restart your terminal or run 'source ~/.zshrc'."
-echo "Enjoy your supercharged terminal!"
 echo "========================================================="
