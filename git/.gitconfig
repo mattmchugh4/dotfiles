@@ -1,0 +1,17 @@
+[user]
+	name = mattmchugh4
+	email = 114327452+mattmchugh4@users.noreply.github.com
+[init]
+	defaultBranch = main
+[color]
+	ui = auto
+[pull]
+	rebase = false
+[core]
+	excludesfile = /Users/mchugh/.gitignore_global
+	editor = code --wait
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
