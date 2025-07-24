@@ -7,7 +7,7 @@ DOTFILES_REPO="git@github.com:mattmchugh4/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
 BREW_INSTALL_URL="/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
 OMZ_INSTALL_URL="sh -c \"$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\""
-STARSHIP_INSTALL_URL="curl -sS https://starship.rs/install.sh | sh -- --yes" # Add --yes to auto-confirm
+STARSHIP_INSTALL_URL="curl -sS https://starship.rs/install.sh | sh -s -- --yes"
 
 # --- Helper Functions ---
 
@@ -104,22 +104,47 @@ install_starship_if_needed() {
     fi
 }
 
+# Backs up existing files and then creates symlinks using stow
 stow_dotfiles() {
-    echo "Changing to dotfiles directory: $DOTFILES_DIR"
+    echo "Stowing dotfiles..."
     if [ ! -d "$DOTFILES_DIR" ]; then
         echo "Error: Dotfiles directory not found at $DOTFILES_DIR" >&2
         exit 1
     fi
-    # Use a subshell to avoid needing to cd back
+
+    # Define the list of applications to stow. Add more here as needed.
+    local packages_to_stow=(
+        zsh
+        starship
+        git
+    )
+
+    # Use a subshell to change directory temporarily
     (
         cd "$DOTFILES_DIR" || exit
-        echo "Stowing dotfiles packages..."
-        # Stow each package. Add/remove as per your setup.
-        stow zsh
-        stow starship
-        stow git
-        # ... add other packages here ...
-        echo "Dotfiles stowed successfully."
+
+        # Loop through each package to check for conflicts
+        for pkg in "${packages_to_stow[@]}"; do
+            echo "Checking for conflicts for '$pkg'..."
+            # Find dotfiles inside the package directory (e.g., zsh/.zshrc)
+            # -maxdepth 1 prevents it from looking in sub-folders of the package
+            dotfiles_in_pkg=$(find "$pkg" -maxdepth 1 -type f -name ".*")
+
+            for dotfile in $dotfiles_in_pkg; do
+                target_file="$HOME/$(basename "$dotfile")"
+
+                # If the target file exists AND is NOT a symlink, back it up.
+                if [ -f "$target_file" ] && ! [ -L "$target_file" ]; then
+                    echo "  -> Found existing file at $target_file. Backing it up to ${target_file}.bak"
+                    mv "$target_file" "${target_file}.bak"
+                fi
+            done
+        done
+
+        # Now, stow the packages. --restow helps fix any incorrect existing links.
+         echo "Running stow for: ${packages_to_stow[*]}"
+stow --restow --target="$HOME" "${packages_to_stow[@]}"
+        echo "✅ Dotfiles stowed successfully."
     )
 }
 
