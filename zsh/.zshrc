@@ -1,3 +1,9 @@
+# --- Cursor Agent Fix ---
+# Skips loading the rest of the config for the non-interactive Cursor Agent.
+if [[ "$PAGER" == "head -n 10000 | cat" || "$COMPOSER_NO_INTERACTION" == "1" ]]; then
+  return
+fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
@@ -110,12 +116,35 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# --- User Configuration & Cross-Platform Adaptations ---
+
+# Homebrew Integration (macOS specific, gracefully ignored elsewhere)
+# Check if running on macOS (Darwin kernel) before trying Homebrew paths
+if [[ "$(uname)" == "Darwin" ]]; then
+  # For Apple Silicon Macs (default Homebrew path)
+  if [ -f "/opt/homebrew/bin/brew" ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  # For Intel Macs (and some older Linux/WSL installations of Homebrew)
+  elif [ -f "/usr/local/bin/brew" ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+fi
 
 eval "$(starship init zsh)"
 eval $(thefuck --alias)
+
 # For Go binaries
 export PATH="$HOME/go/bin:$PATH"
+
+# Platform-specific PATH additions
+if [[ "$(uname)" == "Darwin" ]]; then
+  # macOS specific paths
+  export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+elif [[ "$(uname)" == "Linux" ]]; then
+  # Linux/WSL specific paths
+  export PATH="$HOME/.local/bin:$PATH"
+fi
 
 # Add any other custom aliases here,
 
@@ -128,6 +157,11 @@ export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
 # Transient Plugin, and configuration
 source /opt/homebrew/share/zsh-transient-prompt/transient-prompt.zsh-theme
 TRANSIENT_PROMPT_TRANSIENT_PROMPT='> '
+
+# The next line enables the Google Cloud CLI
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then
+  source "$HOME/google-cloud-sdk/path.zsh.inc"
+fi
 
 # MUST BE SOURCED AT THE END
 source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
