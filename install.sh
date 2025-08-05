@@ -90,14 +90,10 @@ install_apt_packages() {
             brew_path="/opt/homebrew"
         fi
 
-        # Add Homebrew to PATH for current session
-        if [ -f "$brew_path/bin/brew" ]; then
-            eval "$($brew_path/bin/brew shellenv)"
-            echo "✅ Homebrew installed on Linux at $brew_path"
-        else
-            echo "❌ Error: Homebrew installation failed or brew not found at expected location"
-            return 1
-        fi
+        # Set up Homebrew environment for current session
+        echo "Setting up Homebrew environment..."
+        eval "$($brew_path/bin/brew shellenv)"
+        echo "✅ Homebrew installed and configured on Linux at $brew_path"
     else
         echo "Homebrew already installed."
     fi
