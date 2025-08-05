@@ -6,7 +6,6 @@ set -e # Exit immediately if a command exits with a non-zero status.
 DOTFILES_REPO="git@github.com:mattmchugh4/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
 BREW_INSTALL_URL="/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
-OMZ_INSTALL_URL="sh -c \"$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\""
 STARSHIP_INSTALL_URL="curl -sS https://starship.rs/install.sh | sh -s -- --yes"
 
 # --- Helper Functions ---
@@ -133,7 +132,8 @@ install_act() {
 install_oh_my_zsh_if_needed() {
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
         echo "Installing Oh My Zsh..."
-        eval "$OMZ_INSTALL_URL" "" --unattended --keep-zshrc
+        # Directly run the installer script via sh, passing arguments correctly
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
     else
         echo "Oh My Zsh already installed."
     fi
