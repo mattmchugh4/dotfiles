@@ -282,8 +282,8 @@ stow_dotfiles() {
         done
 
         # Now, stow the packages. --restow helps fix any incorrect existing links.
-         echo "Running stow for: ${packages_to_stow[*]}"
-stow --restow --target="$HOME" "${packages_to_stow[@]}"
+        echo "Running stow for: ${packages_to_stow[*]}"
+        stow --restow --target="$HOME" "${packages_to_stow[@]}"
         echo "✅ Dotfiles stowed successfully."
     )
 }
