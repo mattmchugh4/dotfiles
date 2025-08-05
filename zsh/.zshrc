@@ -123,15 +123,21 @@ source $ZSH/oh-my-zsh.sh
 
 # --- User Configuration & Cross-Platform Adaptations ---
 
-# Homebrew Integration (macOS specific, gracefully ignored elsewhere)
-# Check if running on macOS (Darwin kernel) before trying Homebrew paths
+# Homebrew Integration (cross-platform)
+# Works on macOS and Linux
 if [[ "$(uname)" == "Darwin" ]]; then
-  # For Apple Silicon Macs (default Homebrew path)
+  # macOS: Check for Homebrew paths
   if [ -f "/opt/homebrew/bin/brew" ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
-  # For Intel Macs (and some older Linux/WSL installations of Homebrew)
   elif [ -f "/usr/local/bin/brew" ]; then
     eval "$(/usr/local/bin/brew shellenv)"
+  fi
+elif [[ "$(uname)" == "Linux" ]]; then
+  # Linux: Check for Homebrew paths based on architecture
+  if [[ "$(uname -m)" == "x86_64" ]] && [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  elif [[ "$(uname -m)" == "aarch64" ]] && [ -f "/opt/homebrew/bin/brew" ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
 fi
 

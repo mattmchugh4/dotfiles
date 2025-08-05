@@ -82,11 +82,22 @@ install_apt_packages() {
         echo "Installing Homebrew on Linux..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-        # Add Homebrew to PATH for current session
-        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        # Determine the correct Homebrew path based on architecture
+        local brew_path
+        if [[ "$(uname -m)" == "x86_64" ]]; then
+            brew_path="/home/linuxbrew/.linuxbrew"
+        else
+            brew_path="/opt/homebrew"
+        fi
 
-        echo "✅ Homebrew installed on Linux."
+        # Add Homebrew to PATH for current session
+        if [ -f "$brew_path/bin/brew" ]; then
+            eval "$($brew_path/bin/brew shellenv)"
+            echo "✅ Homebrew installed on Linux at $brew_path"
+        else
+            echo "❌ Error: Homebrew installation failed or brew not found at expected location"
+            return 1
+        fi
     else
         echo "Homebrew already installed."
     fi
