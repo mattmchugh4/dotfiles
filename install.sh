@@ -183,6 +183,30 @@ install_starship_if_needed() {
     fi
 }
 
+install_zsh_syntax_highlighting() {
+    local plugin_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+
+    if [ ! -d "$plugin_dir" ]; then
+        echo "Installing zsh-syntax-highlighting plugin..."
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$plugin_dir"
+        echo "✅ zsh-syntax-highlighting installed successfully."
+    else
+        echo "zsh-syntax-highlighting already installed."
+    fi
+}
+
+install_zsh_autosuggestions() {
+    local plugin_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+
+    if [ ! -d "$plugin_dir" ]; then
+        echo "Installing zsh-autosuggestions plugin..."
+        git clone https://github.com/zsh-users/zsh-autosuggestions.git "$plugin_dir"
+        echo "✅ zsh-autosuggestions installed successfully."
+    else
+        echo "zsh-autosuggestions already installed."
+    fi
+}
+
 # Backs up existing files and then creates symlinks using stow
 stow_dotfiles() {
     echo "Stowing dotfiles..."
@@ -260,6 +284,10 @@ setup_zsh_shell
 
 # Install Oh My Zsh (run after stowing .zshrc and setting up zsh)
 install_oh_my_zsh_if_needed
+
+# Install zsh plugins
+install_zsh_syntax_highlighting
+install_zsh_autosuggestions
 
 # Install Starship
 install_starship_if_needed
