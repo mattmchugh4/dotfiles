@@ -29,6 +29,7 @@ install_brew_if_needed() {
 install_brew_packages() {
     local packages=(
         stow
+        zsh       # Zsh shell (may already be installed on modern macOS)
         bat
         coreutils # GNU core utilities
         fzf
@@ -51,6 +52,7 @@ install_brew_packages() {
 install_apt_packages() {
     local packages=(
         stow
+        zsh       # Zsh shell
         bat       # On Debian/Ubuntu, this is often the 'batcat' binary
         fzf
         htop
@@ -129,6 +131,39 @@ install_act() {
     fi
 }
 
+# Checks if zsh is installed and sets it as default shell if needed
+setup_zsh_shell() {
+    if ! command -v zsh &> /dev/null; then
+        echo "❌ Error: Zsh is not installed. Please install zsh first." >&2
+        echo "   This should have been installed with the packages above." >&2
+        exit 1
+    fi
+
+    echo "✅ Zsh is installed."
+
+    # Check if zsh is already the default shell
+    if [[ "$SHELL" != *"zsh"* ]]; then
+        echo "Setting zsh as the default shell..."
+
+        # Get the path to zsh
+        local zsh_path
+        zsh_path=$(command -v zsh)
+
+        # Add zsh to /etc/shells if it's not already there
+        if ! grep -Fxq "$zsh_path" /etc/shells 2>/dev/null; then
+            echo "Adding $zsh_path to /etc/shells..."
+            echo "$zsh_path" | sudo tee -a /etc/shells > /dev/null
+        fi
+
+        # Change the default shell to zsh
+        echo "Changing default shell to zsh..."
+        chsh -s "$zsh_path"
+        echo "✅ Default shell changed to zsh. You may need to restart your terminal."
+    else
+        echo "✅ Zsh is already the default shell."
+    fi
+}
+
 install_oh_my_zsh_if_needed() {
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
         echo "Installing Oh My Zsh..."
@@ -196,13 +231,13 @@ stow --restow --target="$HOME" "${packages_to_stow[@]}"
 
 echo "Starting dotfiles setup..."
 
-# 1. Check for Git
+# Check for Git
 if ! command -v git &> /dev/null; then
     echo "Error: Git is not installed. Please install it manually and re-run this script." >&2
     exit 1
 fi
 
-# 2. Clone the dotfiles repository
+# Clone the dotfiles repository
 if [ ! -d "$DOTFILES_DIR" ]; then
     echo "Cloning dotfiles repository..."
     git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
@@ -211,19 +246,22 @@ else
     (cd "$DOTFILES_DIR" && git pull origin main)
 fi
 
-# 3. Install packages based on OS
+# Install packages based on OS
 install_packages
 
-# 4. Install act (GitHub Actions local runner)
+# Install act (GitHub Actions local runner)
 install_act
 
-# 5. Stow your dotfiles (run this after installing stow)
+# Stow your dotfiles (run this after installing stow)
 stow_dotfiles
 
-# 6. Install Oh My Zsh (run after stowing .zshrc)
+# Setup zsh shell (verify installation and set as default)
+setup_zsh_shell
+
+# Install Oh My Zsh (run after stowing .zshrc and setting up zsh)
 install_oh_my_zsh_if_needed
 
-# 7. Install Starship
+# Install Starship
 install_starship_if_needed
 
 # --- Final Instructions ---
