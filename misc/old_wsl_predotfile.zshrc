@@ -3,7 +3,7 @@
 if [[ "$PAGER" == "head -n 10000 | cat" || "$COMPOSER_NO_INTERACTION" == "1" ]]; then
   return
 fi
-
+# --- End Cursor Agent Fix ---
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
@@ -49,7 +49,6 @@ ZSH_THEME="robbyrussell"
 # Uncomment the following line to enable command auto-correction.
 ENABLE_CORRECTION="true"
 
-# not sure if this actually works, need to test
 # Disable autocorrection specifically for 'ssh'
 alias ssh='ssh'
 
@@ -85,7 +84,6 @@ plugins=(
   sudo
   z
   ssh
-  macos
   fzf
   zsh-autosuggestions
 )
@@ -121,36 +119,15 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# --- User Configuration & Cross-Platform Adaptations ---
+# ohvd alias
+# opens VSCode to the tmc machine directly (once your ssh config is set as per previous instructions)
+alias codetmcapp="code --folder-uri "vscode-remote://ssh-remote+hvtmcapp/home/hvtmc""
 
-# Homebrew Integration (macOS specific, gracefully ignored elsewhere)
-# Check if running on macOS (Darwin kernel) before trying Homebrew paths
-if [[ "$(uname)" == "Darwin" ]]; then
-  # For Apple Silicon Macs (default Homebrew path)
-  if [ -f "/opt/homebrew/bin/brew" ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  # For Intel Macs (and some older Linux/WSL installations of Homebrew)
-  elif [ -f "/usr/local/bin/brew" ]; then
-    eval "$(/usr/local/bin/brew shellenv)"
-  fi
-fi
+# Feel free to extend the path to whichever directory you prefer to open code to. Examples:
+alias codetmcDEV="code --folder-uri "vscode-remote://ssh-remote+hvtmcapp/home/hvtmc/dotstream-ui""
 
-eval "$(starship init zsh)"
-eval $(thefuck --alias)
-
-# For Go binaries
-export PATH="$HOME/go/bin:$PATH"
-
-# Platform-specific PATH additions
-if [[ "$(uname)" == "Darwin" ]]; then
-  # macOS specific paths
-  export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
-elif [[ "$(uname)" == "Linux" ]]; then
-  # Linux/WSL specific paths
-  export PATH="$HOME/.local/bin:$PATH"
-fi
-
-# Add any other custom aliases here,
+# logs you into tmc terminal
+alias tmcapp="ssh hvtmcapp"
 
 # Environment Variables
 export HISTSIZE=32768
@@ -158,25 +135,18 @@ export HISTFILESIZE=$HISTSIZE
 export HISTCONTROL=ignoredups
 export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
 
-# Transient Plugin, and configuration
-source /opt/homebrew/share/zsh-transient-prompt/transient-prompt.zsh-theme
-TRANSIENT_PROMPT_TRANSIENT_PROMPT='> '
+export BROWSER="/usr/bin/wslview"
 
-# The next line enables the Google Cloud CLI
-if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then
-  source "$HOME/google-cloud-sdk/path.zsh.inc"
-fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then
-  source "$HOME/google-cloud-sdk/completion.zsh.inc"
-fi
+# eval $(thefuck --alias)
 
 # MUST BE SOURCED AT THE END
 source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/mchugh/google-cloud-sdk/path.zsh.inc' ]; then . '/home/mchugh/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/mchugh/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/mchugh/google-cloud-sdk/completion.zsh.inc'; fi
