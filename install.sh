@@ -84,10 +84,18 @@ install_apt_packages() {
 
         # Determine the correct Homebrew path based on architecture
         local brew_path
-        if [[ "$(uname -m)" == "x86_64" ]]; then
-            brew_path="/home/linuxbrew/.linuxbrew"
+        if [[ "$(uname -s)" == "Darwin" ]]; then
+            # macOS
+            if [[ "$(uname -m)" == "arm64" ]]; then
+                # macOS on Apple Silicon
+                brew_path="/opt/homebrew"
+            else
+                # macOS on Intel
+                brew_path="/usr/local"
+            fi
         else
-            brew_path="/opt/homebrew"
+            # Linux (both x86_64 and ARM)
+            brew_path="/home/linuxbrew/.linuxbrew"
         fi
 
         # Set up Homebrew environment for current session
