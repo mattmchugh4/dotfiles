@@ -61,6 +61,8 @@ install_apt_packages() {
         tree
         curl
         wget
+        build-essential  # Required for Homebrew
+        git
     )
 
     echo "Linux/WSL detected. Installing packages with APT..."
@@ -73,6 +75,20 @@ install_apt_packages() {
         mkdir -p "$HOME/.local/bin"
         ln -sf "$(command -v batcat)" "$HOME/.local/bin/bat"
         echo "✅ Symlink created. Ensure '$HOME/.local/bin' is in your PATH."
+    fi
+
+    # Install Homebrew on Linux if not present
+    if ! command -v brew &> /dev/null; then
+        echo "Installing Homebrew on Linux..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+        # Add Homebrew to PATH for current session
+        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+        echo "✅ Homebrew installed on Linux."
+    else
+        echo "Homebrew already installed."
     fi
 }
 
@@ -207,6 +223,27 @@ install_zsh_autosuggestions() {
     fi
 }
 
+install_zsh_transient_prompt() {
+    # Check if Homebrew is available (works on both macOS and Linux)
+    if command -v brew &> /dev/null; then
+        # Install via Homebrew (same on both macOS and Linux)
+        if ! brew list olets/tap/zsh-transient-prompt &> /dev/null; then
+            echo "Installing zsh-transient-prompt via Homebrew..."
+            # Add the tap if not already added
+            brew tap olets/tap 2>/dev/null || true
+            # Install the package
+            brew install olets/tap/zsh-transient-prompt
+            echo "✅ zsh-transient-prompt installed successfully via Homebrew."
+        else
+            echo "zsh-transient-prompt already installed via Homebrew."
+        fi
+    else
+        echo "⚠️  Homebrew not found. zsh-transient-prompt requires Homebrew."
+        echo "   Please install Homebrew first: https://brew.sh"
+        return 1
+    fi
+}
+
 # Backs up existing files and then creates symlinks using stow
 stow_dotfiles() {
     echo "Stowing dotfiles..."
@@ -288,6 +325,7 @@ install_oh_my_zsh_if_needed
 # Install zsh plugins
 install_zsh_syntax_highlighting
 install_zsh_autosuggestions
+install_zsh_transient_prompt
 
 # Install Starship
 install_starship_if_needed
@@ -308,9 +346,11 @@ echo "3. Restart your terminal or run 'source ~/.zshrc' to apply all changes."
 if [[ "$(uname -s)" == "Linux" ]]; then
     echo ""
     echo "--- Linux Specific Notes ---"
+    echo "- Homebrew has been installed and is available for consistent package management."
     echo "- For fzf keybindings (Ctrl+R, etc.), add this to your .zshrc:"
     echo "  [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh"
     echo "- Ensure '$HOME/.local/bin' is in your PATH for the 'bat' and 'act' commands to work."
+    echo "- The same zsh-transient-prompt is now available via Homebrew on Linux."
 fi
 
 echo ""

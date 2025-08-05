@@ -158,9 +158,15 @@ export HISTFILESIZE=$HISTSIZE
 export HISTCONTROL=ignoredups
 export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
 
-# Transient Plugin, and configuration
-source /opt/homebrew/share/zsh-transient-prompt/transient-prompt.zsh-theme
-TRANSIENT_PROMPT_TRANSIENT_PROMPT='> '
+# Transient Plugin, and configuration (cross-platform via Homebrew)
+if command -v brew &> /dev/null; then
+  # Use Homebrew version (works on both macOS and Linux)
+  local brew_prefix="$(brew --prefix)"
+  if [ -f "$brew_prefix/share/zsh-transient-prompt/transient-prompt.zsh-theme" ]; then
+    source "$brew_prefix/share/zsh-transient-prompt/transient-prompt.zsh-theme"
+    TRANSIENT_PROMPT_TRANSIENT_PROMPT='> '
+  fi
+fi
 
 # The next line enables the Google Cloud CLI
 if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then
