@@ -1,0 +1,255 @@
+{
+  //correct settings
+  // === Appearance and Theme Settings ===
+  "workbench.colorTheme": "One Dark Pro",
+  "workbench.iconTheme": "material-icon-theme",
+  "material-icon-theme.activeIconPack": "react",
+  "security.workspace.trust.untrustedFiles": "open",
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "files.trimTrailingWhitespace": true, // Removes trailing whitespaces
+  "files.trimFinalNewlines": true, // Ensures only one final newline in the file
+  "files.eol": "\n", // Uses Unix-style line endings
+
+  // === Code Actions on Save ===
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.addMissingImports": "explicit", // Automatically add missing imports on save
+    "source.organizeImports": "explicit"
+  },
+
+  // === General Formatting ===
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // Global default Prettier formatter
+  "editor.formatOnSave": true, // Auto-format code when saving
+  "editor.tabSize": 2, // General tab size for most languages
+  "editor.indentSize": "tabSize", // Match indent size to tab size
+  "editor.detectIndentation": false, // Disable auto-detect indentation
+  "editor.fontSize": 13, // Font size in editor
+  "editor.lineHeight": 24, // Line height for better readability
+  "editor.fontFamily": "JetBrainsMono Nerd Font Mono", // Preferred font
+  "editor.fontLigatures": true, // Use ligatures
+  "editor.wordWrap": "on", // Enable word wrap
+  "editor.wrappingIndent": "indent", // Indent wrapped lines
+  "editor.quickSuggestions": {
+    "strings": "on" // Enable quick suggestions for strings
+  },
+  "editor.gotoLocation.multipleDefinitions": "gotoAndPeek",
+  "editor.linkedEditing": true, // Enable linked editing for tags
+  "editor.inlineSuggest.enabled": true, // Enable inline code suggestions
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true, // Unique colors for each bracket type
+  "editor.accessibilitySupport": "off", // Disable accessibility support
+  "editor.suggest.localityBonus": true,
+
+  // === Prettier Settings ===
+  "prettier.semi": true,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "all",
+  "prettier.printWidth": 100,
+  "prettier.tabWidth": 2,
+
+  // === Language-Specific Formatting ===
+  "[javascript][typescript]": {
+    "editor.tabSize": 2
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "[nginx]": {
+    "editor.defaultFormatter": "ahmadalli.vscode-nginx-conf"
+  },
+  "[xml]": {
+    "editor.defaultFormatter": "redhat.vscode-xml"
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+
+  // === Terminal Settings ===
+  "terminal.integrated.defaultProfile.windows": "Ubuntu (WSL)",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell"
+    },
+    "Command Prompt": {
+      "path": ["${env:windir}\\Sysnative\\cmd.exe", "${env:windir}\\System32\\cmd.exe"],
+      "icon": "terminal-cmd"
+    },
+    "Git Bash": {
+      "source": "Git Bash"
+    },
+    "Ubuntu (WSL)": {
+      "path": "C:\\Windows\\System32\\wsl.exe",
+      "args": ["--cd", "${workspaceFolder}"]
+    }
+  },
+
+  // === Indent Rainbow settings ===
+  "indentRainbow.indicatorStyle": "light",
+  "indentRainbow.colors": [
+    "rgba(255,255,64,0.4)",
+    "rgba(127,255,127, 0.4)",
+    "rgba(255,127,255, 0.4)",
+    "rgba(79,236,236, 0.4)"
+  ],
+  "indentRainbow.lightIndicatorStyleLineWidth": 2,
+  "security.allowedUNCHosts": ["wsl.localhost"],
+
+  // === Git and GitHub Settings ===
+  "git.autofetch": true, // Auto-fetch git repositories
+  "git.openRepositoryInParentFolders": "always", // Open git repositories from parent folders
+  // === TypeScript/JavaScript Settings ===
+  "javascript.updateImportsOnFileMove.enabled": "always", // Auto-update imports on file move
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.implementationsCodeLens.enabled": true, // Show implementation references
+  "typescript.implementationsCodeLens.showOnInterfaceMethods": true,
+  "typescript.preferences.preferTypeOnlyAutoImports": true, // Prefer type-only imports in TypeScript
+
+  // === HTML/Markdown Settings ===
+  "html.format.unformatted": "",
+  "markdown.updateLinksOnFileMove.enabled": "prompt", // Prompt when updating links on file move
+
+  // === Linting and Spell Check Settings ===
+  "cSpell.userWords": [
+    "clsx",
+    "defaulticon",
+    "dotenv",
+    "Dotstream",
+    "echart",
+    "echarts",
+    "Elfege",
+    "EPSG",
+    "fontawesome",
+    "fortawesome",
+    "Geoserver",
+    "Hotspots",
+    "jsonify",
+    "latlng",
+    "linestring",
+    "mapviewer",
+    "markercluster",
+    "mindhop",
+    "multilinestring",
+    "nextjs",
+    "OHVD",
+    "Postgrest",
+    "Roboto",
+    "RWIS",
+    "staticds",
+    "Sublayer",
+    "Sublayers",
+    "svgs",
+    "tailwindcss",
+    "tanstack",
+    "tiktoken",
+    "timesheet",
+    "Togglable",
+    "udot",
+    "ungroup",
+    "vdot",
+    "whitespaces",
+    "zlevel"
+  ],
+
+  // === CSS/SCSS/Less Linting ===
+  "css.lint.importStatement": "warning",
+  "scss.lint.importStatement": "warning",
+  "less.lint.importStatement": "warning",
+  "css.lint.float": "warning",
+  "css.lint.duplicateProperties": "warning",
+  "css.lint.boxModel": "warning",
+  "scss.lint.float": "warning",
+
+  // === Remote and Hybrid Setup ===
+  "remote.autoForwardPortsSource": "hybrid", // Auto-forward ports in hybrid environments
+
+  // === Search Exclusions ===
+  "search.exclude": {
+    "**/.next/": true,
+    "**/archive/**": true,
+    "**/DEV_NOTES_OHVD.md": true,
+    "**/KendoThemeBuilderPackage/": true,
+    "**/Notes/": true,
+    "**/package-lock.json": true,
+    "**/project-hierarchy.txt": true,
+    "**/README.md": true,
+    "geoserver/": true
+  },
+
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  },
+  "rainbow_csv.csv_lint_detect_trailing_spaces": true,
+  "terminal.integrated.suggest.enabled": true,
+  "git.confirmSync": false,
+  "githubPullRequests.pushBranch": "always",
+  "github.gitProtocol": "ssh",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "githubPullRequests.terminalLinksHandler": "github",
+  "[dockerfile]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "redhat.telemetry.enabled": true,
+  "githubPullRequests.pullBranch": "never",
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.cursorStyleInactive": "line",
+  "terminal.integrated.rightClickBehavior": "paste",
+  "workbench.colorCustomizations": {
+    "terminal.selectionBackground": "#F2F2F2B3" // Background color for highlighted text
+  },
+  "playwright.runGlobalSetupOnEachRun": false,
+  "playwright.reuseBrowser": true,
+  "git.enableSmartCommit": true,
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 10000,
+  "shellcheck.run": "onSave",
+  "shellcheck.customArgs": ["-x"],
+  "eslint.run": "onSave",
+  "cSpell.enabledNotifications": {
+    "Maximum Word Length Exceeded": false,
+    "Lines too Long": false,
+    "Average Word Length too Long": false
+  },
+  "remote.SSH.remotePlatform": {
+    "hvtmcapp": "linux"
+  },
+  "github.copilot.advanced": {},
+
+  // === Python ===
+  "black-formatter.args": ["--line-length=100"],
+  "flake8.args": [
+    "--max-line-length=100",
+    "--extend-ignore=E203,E701,E302,B950,E265,F841,E231,E303,E261"
+  ],
+  "flake8.severity": {
+    "E501": "Warning",
+    "F401": "Warning"
+  },
+  "python.analysis.typeCheckingMode": "standard",
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.typeEvaluation.enableReachabilityAnalysis": true,
+  "python.missingPackage.severity": "Error",
+  "python.analysis.typeEvaluation.deprecateTypingAliases": true,
+  "github.copilot.chat.agent.thinkingTool": true,
+  "github.copilot.chat.codesearch.enabled": true,
+  "chat.tools.autoApprove": true,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.chat.languageContext.inline.typescript.enabled": true,
+  "github.copilot.chat.languageContext.fix.typescript.enabled": true,
+  "github.copilot.chat.generateTests.codeLens": true,
+  "github.copilot.chat.edits.temporalContext.enabled": true,
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.completionContext.typescript.mode": "on",
+  "github.copilot.chat.languageContext.typescript.enabled": true
+}
