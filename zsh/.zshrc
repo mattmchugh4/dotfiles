@@ -165,7 +165,14 @@ if command -v brew &> /dev/null; then
   if [ -f "$brew_prefix/share/zsh-transient-prompt/transient-prompt.zsh-theme" ]; then
     source "$brew_prefix/share/zsh-transient-prompt/transient-prompt.zsh-theme"
     TRANSIENT_PROMPT_TRANSIENT_PROMPT='> '
+  else
+    echo "⚠️  Warning: zsh-transient-prompt not found at $brew_prefix/share/zsh-transient-prompt/transient-prompt.zsh-theme"
+    echo "   Run: brew install olets/tap/zsh-transient-prompt"
   fi
+else
+  echo "⚠️  Warning: Homebrew not found. zsh-transient-prompt requires Homebrew."
+  echo "   Install Homebrew: https://brew.sh"
+  echo "   Then run: brew install olets/tap/zsh-transient-prompt"
 fi
 
 # The next line enables the Google Cloud CLI
@@ -178,11 +185,11 @@ if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then
   source "$HOME/google-cloud-sdk/completion.zsh.inc"
 fi
 
-# MUST BE SOURCED AT THE END
-source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# MUST BE SOURCED AT THE END
+source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
