@@ -133,12 +133,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
   fi
 elif [[ "$(uname)" == "Linux" ]]; then
-  # Linux: Check for Homebrew paths based on architecture
-  if [[ "$(uname -m)" == "x86_64" ]] && [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-  elif [[ "$(uname -m)" == "aarch64" ]] && [ -f "/opt/homebrew/bin/brew" ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  fi
 fi
 
 eval "$(starship init zsh)"
