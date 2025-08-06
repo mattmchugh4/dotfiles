@@ -191,6 +191,9 @@ if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then
   source "$HOME/google-cloud-sdk/completion.zsh.inc"
 fi
 
+# Prevents zsh from trying to autocorrect the 'ssh' command to '.ssh'.
+CORRECT_IGNORE=(ssh)
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -199,3 +202,10 @@ export NVM_DIR="$HOME/.nvm"
 
 # MUST BE SOURCED AT THE END
 source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# pnpm
+export PNPM_HOME="/home/mchugh/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
