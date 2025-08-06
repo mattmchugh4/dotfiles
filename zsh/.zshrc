@@ -14,7 +14,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time Oh My Zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+export ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -47,7 +47,7 @@ ZSH_THEME="robbyrussell"
 # DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
-ENABLE_CORRECTION="true"
+export ENABLE_CORRECTION="true"
 
 # not sure if this actually works, need to test
 # Disable autocorrection specifically for 'ssh'
@@ -80,7 +80,7 @@ alias ssh='ssh'
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(
+export plugins=(
   git
   sudo
   z
@@ -123,8 +123,7 @@ source $ZSH/oh-my-zsh.sh
 
 # --- User Configuration & Cross-Platform Adaptations ---
 
-# Homebrew Integration (cross-platform)
-# Works on macOS and Linux
+# Homebrew Integration (cross-platform), Works on macOS and Linux
 if [[ "$(uname)" == "Darwin" ]]; then
   # macOS: Check for Homebrew paths
   if [ -f "/opt/homebrew/bin/brew" ]; then
@@ -187,7 +186,7 @@ if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then
 fi
 
 # Prevents zsh from trying to autocorrect the 'ssh' command to '.ssh'.
-CORRECT_IGNORE=(ssh)
+export CORRECT_IGNORE=(ssh)
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm

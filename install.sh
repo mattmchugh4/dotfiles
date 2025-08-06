@@ -38,6 +38,8 @@ install_brew_packages() {
     rename
     thefuck
     tree
+    shfmt
+    shellcheck
   )
 
   echo "macOS detected. Installing packages with Homebrew..."
