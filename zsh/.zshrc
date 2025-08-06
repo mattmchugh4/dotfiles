@@ -133,7 +133,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
   fi
 elif [[ "$(uname)" == "Linux" ]]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
 eval "$(starship init zsh)"
@@ -160,7 +160,7 @@ export HISTCONTROL=ignoredups
 export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
 
 # Transient Plugin, and configuration (cross-platform via Homebrew)
-if command -v brew &> /dev/null; then
+if command -v brew &>/dev/null; then
   # Use Homebrew version (works on both macOS and Linux)
   local brew_prefix="$(brew --prefix)"
   if [ -f "$brew_prefix/share/zsh-transient-prompt/transient-prompt.zsh-theme" ]; then
@@ -190,8 +190,8 @@ fi
 CORRECT_IGNORE=(ssh)
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -200,7 +200,7 @@ source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-sy
 # pnpm
 export PNPM_HOME="/home/mchugh/.local/share/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+*":$PNPM_HOME:"*) ;;
+*) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
