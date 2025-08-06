@@ -136,7 +136,7 @@ elif [[ "$(uname)" == "Linux" ]]; then
 fi
 
 eval "$(starship init zsh)"
-eval $(thefuck --alias)
+eval "$(thefuck --alias)"
 
 # For Go binaries
 export PATH="$HOME/go/bin:$PATH"
@@ -161,10 +161,10 @@ export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
 # Transient Plugin, and configuration (cross-platform via Homebrew)
 if command -v brew &>/dev/null; then
   # Use Homebrew version (works on both macOS and Linux)
-  local brew_prefix="$(brew --prefix)"
+  brew_prefix="$(brew --prefix)"
   if [ -f "$brew_prefix/share/zsh-transient-prompt/transient-prompt.zsh-theme" ]; then
     source "$brew_prefix/share/zsh-transient-prompt/transient-prompt.zsh-theme"
-    TRANSIENT_PROMPT_TRANSIENT_PROMPT='> '
+    export TRANSIENT_PROMPT_TRANSIENT_PROMPT='> '
   else
     echo "⚠️  Warning: zsh-transient-prompt not found at $brew_prefix/share/zsh-transient-prompt/transient-prompt.zsh-theme"
     echo "   Run: brew install olets/tap/zsh-transient-prompt"
@@ -194,8 +194,7 @@ export NVM_DIR="$HOME/.nvm"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# MUST BE SOURCED AT THE END
-source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# todo, need to figure out how to handle pnpm here
 # pnpm
 export PNPM_HOME="/home/mchugh/.local/share/pnpm"
 case ":$PATH:" in
@@ -203,3 +202,6 @@ case ":$PATH:" in
 *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# MUST BE SOURCED AT THE END
+source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
