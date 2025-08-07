@@ -9,7 +9,7 @@
 	rebase = false
 [core]
 	excludesfile = /Users/mchugh/.gitignore_global
-	editor = vim
+	editor = nano
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
