@@ -35,6 +35,7 @@ COMMON_BREW_PACKAGES=(
   stow       # Symlink farm manager
   thefuck    # Corrects your previous console command
   tree       # Display directories as trees
+  node       # Node.js
   pnpm       # Node package manager
 )
 
