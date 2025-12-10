@@ -121,6 +121,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+if [ -f ~/.aliases ]; then
+  . ~/.aliases
+fi
 # --- User Configuration & Cross-Platform Adaptations ---
 
 # Homebrew Integration (cross-platform), Works on macOS and Linux
@@ -196,28 +199,28 @@ export NVM_DIR="$HOME/.nvm"
 
 # System info function
 sysinfo() {
-    echo "=== System Information ==="
-    echo "Hostname: $(hostname)"
-    echo "OS: $(grep PRETTY_NAME /etc/os-release | cut -d'\"' -f2)"
-    echo "Kernel: $(uname -r)"
-    echo "Architecture: $(uname -m)"
-    echo "CPU: $(grep 'model name' /proc/cpuinfo | head -1 | cut -d':' -f2 | xargs)"
-    echo "Memory: $(free -h | awk '/^Mem:/ {print $2}')"
-    echo "Disk: $(df -h / | awk 'NR==2 {print $2}')"
-    echo "Uptime: $(uptime -p)"
-    echo "Load Average: $(uptime | awk -F'load average:' '{print $2}')"
-    echo "Temperature: $(vcgencmd measure_temp | awk -F'[=]' '{printf \"%.1f°F\n\", ($2 * 9/5) + 32}')"
+  echo "=== System Information ==="
+  echo "Hostname: $(hostname)"
+  echo "OS: $(grep PRETTY_NAME /etc/os-release | cut -d'\"' -f2)"
+  echo "Kernel: $(uname -r)"
+  echo "Architecture: $(uname -m)"
+  echo "CPU: $(grep 'model name' /proc/cpuinfo | head -1 | cut -d':' -f2 | xargs)"
+  echo "Memory: $(free -h | awk '/^Mem:/ {print $2}')"
+  echo "Disk: $(df -h / | awk 'NR==2 {print $2}')"
+  echo "Uptime: $(uptime -p)"
+  echo "Load Average: $(uptime | awk -F'load average:' '{print $2}')"
+  echo "Temperature: $(vcgencmd measure_temp | awk -F'[=]' '{printf \"%.1f°F\n\", ($2 * 9/5) + 32}')"
 }
 
 # # Network info function
 netinfo() {
-    echo "=== Network Information ==="
-    echo "External IP: $(curl -s ifconfig.me)"
-    echo "Internal IP: $(hostname -I)"
-    echo "Gateway: $(ip route | grep default | awk '{print $3}')"
-    echo "DNS: $(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')"
+  echo "=== Network Information ==="
+  echo "External IP: $(curl -s ifconfig.me)"
+  echo "Internal IP: $(hostname -I)"
+  echo "Gateway: $(ip route | grep default | awk '{print $3}')"
+  echo "DNS: $(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')"
 }
-
 
 # MUST BE SOURCED AT THE END
 source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+export PATH="/home/linuxbrew/.linuxbrew/opt/libpq/bin:$PATH"
